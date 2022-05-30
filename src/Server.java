@@ -1,5 +1,7 @@
 import java.net.*;
 import java.io.*;
+import java.util.StringJoiner;
+
 public class Server {
     public static void main(String[] args) throws IOException{
 
@@ -11,13 +13,23 @@ public class Server {
             Socket clientSocket = serverSocket.accept();
             System.out.println("Client accepted " + clientSocket.getInetAddress());
 
+            InputStreamReader reader = new InputStreamReader(clientSocket.getInputStream());
+            BufferedReader bReader = new BufferedReader(reader);
             OutputStreamWriter writer = new OutputStreamWriter(clientSocket.getOutputStream());
-            writer.write("HTTP/1.0 200 OK\n" +
-                    "Content-type: text/html\n" +
-                    "\n" +
-                    "<h1>helloman</h1>\n");
+
+            String request = bReader.readLine();
+            String response = "length is " + request.length() + "\n";
+
+//            writer.write("HTTP/1.0 200 OK\n" +
+//                    "Content-type: text/html\n" +
+//                    "\n" +
+//                    "<h1>helloman</h1>\n");
+            writer.write(response);
             writer.flush();
 
+
+            bReader.close();
+            reader.close();
             writer.close();
             clientSocket.close();
         }
